@@ -1,20 +1,3 @@
-data "oci_identity_availability_domains" "ADs" {
-  compartment_id = var.compartment_ocid
-}
-
-data "oci_core_images" "InstanceImageOCID" {
-  compartment_id           = var.compartment_ocid
-  operating_system         = var.OS
-  operating_system_version = var.OS_version
-  shape                    = var.instance_type_name
-
-  filter {
-    name   = "display_name"
-    values = var.custom_image_name == null ? ["^*$"] : [var.custom_image_name]
-    regex  = true
-  }
-}
-
 resource "oci_core_instance" "create_instance" {
   availability_domain = data.oci_identity_availability_domains.ADs.availability_domains[0]["name"]
   compartment_id      = var.compartment_ocid
@@ -44,26 +27,4 @@ resource "oci_core_instance" "create_instance" {
     ssh_authorized_keys = local.ssh_authorized_keys
     user_data           = local.user_data_file_path
   }
-}
-
-resource "oci_core_volume" "block_volume" {
-  count               = length(var.additional_volumes)
-  availability_domain = data.oci_identity_availability_domains.ADs.availability_domains[0]["name"]
-  compartment_id      = var.compartment_ocid
-  display_name        = "${var.vm_name}-${count.index}"
-  size_in_gbs         = var.additional_volumes[count.index]
-}
-
-resource "oci_core_volume_attachment" "block_attach" {
-  count           = length(var.additional_volumes)
-  attachment_type = "paravirtualized"
-  instance_id     = oci_core_instance.create_instance.id
-  volume_id       = oci_core_volume.block_volume[count.index].id
-  device          = var.OS == "Windows" ? null : "${local.volume_device[count.index]}"
-  use_chap        = true
-}
-
-data "oci_core_instance_credentials" "instance_credential" {
-  count       = var.OS == "Windows" ? 1 : 0
-  instance_id = oci_core_instance.create_instance.id
 }
