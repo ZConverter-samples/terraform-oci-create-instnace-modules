@@ -291,7 +291,7 @@ terraform -chdir={terraform data file path} plan -var-file={vars file with user 
 
 **Executes the actions proposed in a Terraform plan.**
 ```
-terraform.exe apply
+terraform -chdir={terraform data file path} apply -var-file={vars file with user specified name} -auto-approve
 ```
 * **Note**
 	* -auto-approve : Skips interactive approval of plan before applying. This option is ignored when you pass a previously-saved plan file, because Terraform considers you passing the plan file as the approval and so will never prompt in that case.
