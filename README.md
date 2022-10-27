@@ -256,3 +256,13 @@ module  "create_oci_instance" {
 | type | string | conditional | none | string value | type number (Use only when using the icmp protocol) |
 | code | string | conditional | none | string value | code number (Use only when using the icmp protocol) |
 | remote_ip_prefix | string | conditional | none | IPv4 CIDR | CIDR |
+
+```
+terraform init
+```
+```
+terraform plan
+```
+```
+terraform apply
+```
