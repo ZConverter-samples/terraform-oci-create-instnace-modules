@@ -230,6 +230,13 @@ module  "create_oci_instance" {
   additional_volumes =  [50]
 }
 ```
+### output
+* Returns the default information and connection information for the instance.
+```
+output "result" {
+  value = module.create_oci_instance.result
+}
+```
 ### create-instance Module Attributes
 | Attribute | Data Type | Required | Default Value | Valid Values | Description |
 |---|---|---|---|---|---|
