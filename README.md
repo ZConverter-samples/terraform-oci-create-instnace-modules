@@ -1,3 +1,4 @@
+
 # terraform-oci-create-instnace-modules
 
 > Before You Begin
@@ -126,3 +127,131 @@ Prepare your environment for authenticating and running your Terraform scripts. 
    1. **Result**
 
       ![Result](https://raw.githubusercontent.com/ZConverter-samples/terraform-oci-create-instnace-modules/images/images/download_result.png)
+
+##  Start Terraform
+
+### Example tf file
+```
+terraform {
+  required_version  =  ">= 1.3.0"
+  required_providers {
+    oci  =  {
+      source = "oracle/oci"
+      version = "4.96.0"
+    }
+  }
+}
+
+provider  "oci" {
+  tenancy_ocid  = "<The tenancy ocid you wrote down above>"
+  user_ocid  = "<The user ocid you wrote down above>"
+  fingerprint  = "<The fingerprint you wrote down above>"
+  region  = "<The region you wrote down above>"
+  private_key_path  = "<The absolute path of the private key you downloaded>"
+}
+
+module  "create_oci_instance" {
+  source  =  "git::https://github.com/ZConverter-samples/terraform-oci-create-instnace-modules.git"
+  region = "us-ashburn-1"
+  vm_name = "oracle-terraform"
+  subnet_ocid = "ocid1.subnet.oc1.us-ashburn-1.aaaaa...."
+  compartment_ocid = "ocid1.compartment.oc1..aaaa"
+  OS = "CentOS"
+  OS_version = "7
+  instance_type_name = "VM.Standard.E4.Flex"
+  instance_cpus = 1
+  instance_memory_in_gbs = 16
+  ssh_public_key = "ssh-rsa AAAAB3Nza....ssh_public_key"
+  additional_volumes =  [50]
+  security_list = [
+	{
+		"direction" : "ingress",
+		"protocol" : "tcp",
+		"port_range_min" : "22",
+		"port_range_max" : "22",
+		"remote_ip_prefix" : "0.0.0.0/0"
+	}
+  ]
+}
+```
+*  Create a `terraform.tf` file
+```
+touch terraform.tf
+```
+
+### `terraform.tf`
+
+#### terraform version
+``` 
+terraform {
+  required_version  =  ">= 1.3.0"
+  required_providers {
+    oci  =  {
+      source = "oracle/oci"
+      version = "4.96.0"
+    }
+  }
+}
+```
+### provider
+* If you would like to know more about multiple provider configurations, please refer to [OCI configurations](https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformproviderconfiguration.htm).
+```
+provider  "oci" {
+  tenancy_ocid  = "<The tenancy ocid you wrote down above>"
+  user_ocid  = "<The user ocid you wrote down above>"
+  fingerprint  = "<The fingerprint you wrote down above>"
+  region  = "<The region you wrote down above>"
+  private_key_path  = "<The absolute path of the private key you downloaded>"
+}
+```
+#### or
+```
+provider  "oci" {
+  config_file_profile = "<The profile you will use for the configuration file>"
+}
+```
+* Profile name if you want to provide authentication credentials using a custom profile in the OCI configuration file. For more information, see Using [SDK and CLI Configuration Files](https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformproviderconfiguration.htm#terraformproviderconfiguration_topic-SDK_and_CLI_Config_File).
+
+### module
+* example
+```
+module  "create_oci_instance" {
+  source  =  "git::https://github.com/ZConverter-samples/terraform-oci-create-instnace-modules.git"
+  region = "us-ashburn-1"
+  vm_name = "oracle-terraform"
+  subnet_ocid = "ocid1.subnet.oc1.us-ashburn-1.aaaaa...."
+  compartment_ocid = "ocid1.compartment.oc1..aaaa"
+  OS = "CentOS"
+  OS_version = "7
+  instance_type_name = "VM.Standard.E4.Flex"
+  instance_cpus = 1
+  instance_memory_in_gbs = 16
+  ssh_public_key = "ssh-rsa AAAAB3Nza....ssh_public_key"
+  additional_volumes =  [50]
+}
+```
+| Attribute | Data Type | Required | Default Value | Valid Values | Description |
+|---|---|---|---|---|---|
+| region | string | yes | none | string of the region |The region where you want to create an instance.|
+|vm_name| string | yes |  none | Display Name | The display name of the instance. |
+| compartment_ocid | string | yes | none | Compartments available for the user| OCID of the compartment that the Compute Instance is created in |
+| subnet_ocid |string | yes | none | Subnet created | The subnets in which the instance primary VNICs are created. |
+| OS | string | yes | none | string of OS Name | One of Canonical Ubuntu, CentOS, Oracle Autonomous Linux, Oracle Linux, Oracle Linux Cloud Developer, Windows |
+| OS_version |  string | yes | none| string of OS Version Name | Version of the selected OS. |
+| custom_image_name |  string | no | none| string value | When creating an instance using a custom image |
+| boot_volume_size_in_gbs| number | no | 50 | number value | Boot volume size of the instance you want to create. |
+| instance_type_name | string | yes | none | string of Shape Name | Shape types provided by Oracle Cloud. |
+| instance_cpus | number | conditional | 1 | number value | Number of cpu to use when using instance_type_name as flexible type. |
+| instance_memory_in_gbs | number | conditional | 16 | number value | Number of memory size to use when using instance_type_name as flexible type. |
+| ssh_public_key | string | conditional | none | string value | ssh public key to use when using Linux-based OS. (Use only one of the following: ssh_public_key, ssh_public_key_file_path)|
+| ssh_public_key_file_path | string | conditional | none | string value | Absolute path of ssh public key file to use when using Linux-based OS. (Use only one of the following: ssh_public_key, ssh_public_key_file_path)|
+| user_data_file_path | string | conditional | none | string value | Absolute path of user data file path to use when cloud-init.|
+| additional_volumes | list | conditional | [] | list value | Use to add a block volume. Use numeric arrays.|
+| security_list | list | no | none | list value | When you need to create ingress and egress rules |
+| direction | string | conditional | none | string value | Either "ingress" or "egress" |
+| protocol | string | conditional | none | string value | Enter a supported protocol name |
+| port_range_min | string | conditional | none | string value | Minimum Port Range (Use only when using udp, tcp protocol) |
+| port_range_max | string | conditional | none | string value | Maximum Port Range (Use only when using udp, tcp protocol) |
+| type | string | conditional | none | string value | type number (Use only when using the icmp protocol) |
+| code | string | conditional | none | string value | code number (Use only when using the icmp protocol) |
+| remote_ip_prefix | string | conditional | none | IPv4 CIDR | CIDR |
