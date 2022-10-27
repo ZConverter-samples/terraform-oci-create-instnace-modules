@@ -276,7 +276,7 @@ Linux
 terraform -chdir={terraform data file path} init
 ```
 * **Note**
-       -chdir : The usual way to run Terraform is to first switch to the directory containing the `.tf` files for your root module (for example, using the `cd` command), so that Terraform will find those files automatically without any extra arguments.
+       -chdir : When you use a chdir the usual way to run Terraform is to first switch to the directory containing the `.tf` files for your root module (for example, using the `cd` command), so that Terraform will find those files automatically without any extra arguments.
 
 **Creates an execution plan. By default, creating a plan consists of:**
 * Reading the current state of any already-existing remote objects to make sure that the Terraform state is up-to-date.
