@@ -1,3 +1,13 @@
+terraform {
+  required_version = ">= 1.3.0"
+  required_providers {
+    oci = {
+      source  = "oracle/oci"
+      version = "4.96.0"
+    }
+  }
+}
+
 locals {
   instance_type_split = split(".", "${var.instance_type_name}")
   ssh_authorized_keys = var.OS != "Windows" ? var.ssh_public_key != null ? var.ssh_public_key : var.ssh_public_key_file_path != null ? base64encode(file(var.ssh_public_key_file_path)) : null : null
