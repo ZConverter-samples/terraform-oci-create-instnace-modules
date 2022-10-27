@@ -257,12 +257,41 @@ module  "create_oci_instance" {
 | code | string | conditional | none | string value | code number (Use only when using the icmp protocol) |
 | remote_ip_prefix | string | conditional | none | IPv4 CIDR | CIDR |
 
+## init
+**tree**
+Windows
 ```
-terraform init
+.
+| terraform.tf
+| terraform.exe
 ```
+
+Linux
 ```
-terraform plan
+.
+| terraform.tf
 ```
+* **Go to the file path of Terraform.exe and Initialize the working directory containing the terraform configuration file.**
 ```
-terraform apply
+terraform -chdir={terraform data file path} init
 ```
+* **Note**
+       -chdir : The usual way to run Terraform is to first switch to the directory containing the `.tf` files for your root module (for example, using the `cd` command), so that Terraform will find those files automatically without any extra arguments.
+
+**Creates an execution plan. By default, creating a plan consists of:**
+* Reading the current state of any already-existing remote objects to make sure that the Terraform state is up-to-date.
+* Comparing the current configuration to the prior state and noting any differences.
+* Proposing a set of change actions that should, if applied, make the remote objects match the configuration.
+```
+terraform -chdir={terraform data file path} plan -var-file={vars file with user specified name}
+```
+* **Note**
+	* -var-file : Sets values for potentially many [input variables](https://www.terraform.io/docs/language/values/variables.html) declared in the root module of the configuration, using definitions from a ["tfvars" file](https://www.terraform.io/docs/language/values/variables.html#variable-definitions-tfvars-files). Use this option multiple times to include values from more than one file.
+     * The file name of vars.tfvars can be changed.
+
+**Executes the actions proposed in a Terraform plan.**
+```
+terraform.exe apply
+```
+* **Note**
+	* -auto-approve : Skips interactive approval of plan before applying. This option is ignored when you pass a previously-saved plan file, because Terraform considers you passing the plan file as the approval and so will never prompt in that case.
