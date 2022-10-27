@@ -271,7 +271,7 @@ Linux
 .
 | terraform.tf
 ```
-* **Go to the file path of Terraform.exe and Initialize the working directory containing the terraform configuration file.**
+**Go to the file path of Terraform.exe and Initialize the working directory containing the terraform configuration file.**
 ```
 terraform -chdir={terraform data file path} init
 ```
