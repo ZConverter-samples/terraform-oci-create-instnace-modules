@@ -286,7 +286,7 @@ terraform -chdir={terraform data file path} init
 terraform -chdir={terraform data file path} plan -var-file={vars file with user specified name}
 ```
 * **Note**
-	* -var-file : Sets values for potentially many [input variables](https://www.terraform.io/docs/language/values/variables.html) declared in the root module of the configuration, using definitions from a ["tfvars" file](https://www.terraform.io/docs/language/values/variables.html#variable-definitions-tfvars-files). Use this option multiple times to include values from more than one file.
+	* -var-file : When you use a var-file Sets values for potentially many [input variables](https://www.terraform.io/docs/language/values/variables.html) declared in the root module of the configuration, using definitions from a ["tfvars" file](https://www.terraform.io/docs/language/values/variables.html#variable-definitions-tfvars-files). Use this option multiple times to include values from more than one file.
      * The file name of vars.tfvars can be changed.
 
 **Executes the actions proposed in a Terraform plan.**
