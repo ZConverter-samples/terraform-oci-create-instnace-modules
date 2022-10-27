@@ -230,7 +230,7 @@ module  "create_oci_instance" {
   additional_volumes =  [50]
 }
 ```
-### create-instance Attributes
+### create-instance Module Attributes
 | Attribute | Data Type | Required | Default Value | Valid Values | Description |
 |---|---|---|---|---|---|
 | region | string | yes | none | string of the region |The region where you want to create an instance.|
