@@ -157,7 +157,7 @@ module  "create_oci_instance" {
   subnet_ocid = "ocid1.subnet.oc1.us-ashburn-1.aaaaa...."
   compartment_ocid = "ocid1.compartment.oc1..aaaa"
   OS = "CentOS"
-  OS_version = "7
+  OS_version = "7"
   instance_type_name = "VM.Standard.E4.Flex"
   instance_cpus = 1
   instance_memory_in_gbs = 16
