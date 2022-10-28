@@ -11,7 +11,7 @@ terraform {
 locals {
   instance_type_split = split(".", "${var.instance_type_name}")
   ssh_authorized_keys = var.OS != "Windows" ? var.ssh_public_key != null ? var.ssh_public_key : var.ssh_public_key_file_path != null ? base64encode(file(var.ssh_public_key_file_path)) : null : null
-  user_data_file_path = var.user_data_file_path != null ? file(var.user_data_file_path) : null
+  user_data_file_path = var.user_data != null ? base64encode(var.user_data) : var.user_data_file_path != null ? base64encode(file(var.user_data_file_path)) : null
   volume_device = formatlist("/dev/oracleoci/oraclevd%s", [
     "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
     "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"
@@ -256,6 +256,11 @@ variable "ssh_public_key_file_path" {
 
 variable "user_data_file_path" {
   type    = string
+  default = null
+}
+
+variable "user_data" {
+  type = string
   default = null
 }
 
