@@ -250,10 +250,10 @@ Prepare your environment for authenticating and running your Terraform scripts. 
    user_data_file_path = var.terraform_data.vm_info.user_data_file_path
    additional_volumes = var.terraform_data.vm_info.additional_volumes
 
-   OS = var.terraform_data.operating_system.OS
-   OS_version = var.terraform_data.operating_system.OS_version
-   custom_image_name = var.terraform_data.operating_system.custom_image_name
-   boot_volume_size_in_gbs = var.terraform_data.operating_system.boot_volume_size_in_gbs
+   OS = var.terraform_data.vm_info.operating_system.OS
+   OS_version = var.terraform_data.vm_info.operating_system.OS_version
+   custom_image_name = var.terraform_data.vm_info.operating_system.custom_image_name
+   boot_volume_size_in_gbs = var.terraform_data.vm_info.operating_system.boot_volume_size_in_gbs
    
    subnet_ocid = var.terraform_data.vm_info.network_interface.subnet_ocid
    security_list = var.terraform_data.vm_info.network_interface.security_list
