@@ -317,13 +317,12 @@ Prepare your environment for authenticating and running your Terraform scripts. 
 | terraform_data.vm_info.vm_name | string | yes | none |The name of the instance you want to create.|
 | terraform_data.vm_info.compartment_ocid | string | no | terraform_data.provider.tenancy_ocid |Parcel to create an instance (automatically use tenancy_ocid if not entered).|
 | terraform_data.vm_info.operating_system.OS | string | yes | none |Enter the OS name you want to create among (Canonical Ubuntu, CentOS, Oracle Autonomous Linux, Oracle Linux, Oracle Linux Cloud Developer, Windows).|
-| terraform_data.vm_info.operating_system.OS_version | string | yes | none |Enter the version of the OS selected in terraform_data.vm_info.operating_system.OS.|
 | terraform_data.vm_info.operating_system.OS_version | string | no | none |Enter the image name when the OS you want to create is a custom user image of the oci.|
 | terraform_data.vm_info.operating_system.custom_image_name | string | no | none |Enter the image name when the OS you want to create is a custom user image of the oci.|
-| terraform_data.vm_info.operating_system.boot_volume_size_in_gbs | string | no | 50 |Boot volume size of the instance you want to create.|
+| terraform_data.vm_info.operating_system.boot_volume_size_in_gbs | number | no | 50 |Boot volume size of the instance you want to create.|
 | terraform_data.vm_info.shape.shape_name | string | yes | none |Shape types provided by Oracle Cloud.|
-| terraform_data.vm_info.shape.shape_cpus | string | conditional | 1 |Number of cpu to use when using instance_type_name as flexible type.|
-| terraform_data.vm_info.shape.shape_memory_in_gbs | string | conditional | 16 |Number of memory size to use when using instance_type_name as flexible type.|
+| terraform_data.vm_info.shape.shape_cpus | number | conditional | 1 |Number of cpu to use when using instance_type_name as flexible type.|
+| terraform_data.vm_info.shape.shape_memory_in_gbs | number | conditional | 16 |Number of memory size to use when using instance_type_name as flexible type.|
 | terraform_data.vm_info.network_interface.subnet_ocid | string | yes | none |The subnets in which the instance primary VNICs are created.|
 | terraform_data.vm_info.network_interface.security_list | list | no | none |	When you need to create ingress and egress rules.|
 | terraform_data.vm_info.network_interface.security_list.[*].direction | stirng | conditional | none | Either "ingress" or "egress"|
