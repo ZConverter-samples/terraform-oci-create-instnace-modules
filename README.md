@@ -130,6 +130,17 @@ Prepare your environment for authenticating and running your Terraform scripts. 
 
 ##  Start Terraform
 
+* To use terraform, you must have a terraform file of command written and a terraform executable.
+
+*  Create a `terraform.tf` file in the path where the user will use the terraform.
+   ```
+   touch terraform.tf
+   ```
+
+* Writing a terraform version
+   * You should write the following script in the terraform.tf file.
+
+
 ### Example tf file
 ```
 terraform {
@@ -173,10 +184,6 @@ module  "create_oci_instance" {
 	}
   ]
 }
-```
-*  Create a `terraform.tf` file
-```
-touch terraform.tf
 ```
 
 ### `terraform.tf`
