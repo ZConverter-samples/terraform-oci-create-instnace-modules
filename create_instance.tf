@@ -18,8 +18,8 @@ resource "oci_core_instance" "create_instance" {
   dynamic "shape_config" {
     for_each = local.instance_type_split[length(local.instance_type_split) - 1] == "Flex" ? [1] : []
     content {
-      memory_in_gbs = var.instance_memory_in_gbs
-      ocpus         = var.instance_cpus
+      memory_in_gbs = var.shape_memory_in_gbs
+      ocpus         = var.shape_cpus
     }
   }
 
