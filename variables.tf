@@ -229,17 +229,17 @@ variable "boot_volume_size_in_gbs" {
   default = 50
 }
 
-variable "instance_type_name" {
+variable "shpae_name" {
   type    = string
   default = null
 }
 
-variable "instance_cpus" {
+variable "shpae_cpus" {
   type    = number
   default = 1
 }
 
-variable "instance_memory_in_gbs" {
+variable "shpae_memory_in_gbs" {
   type    = number
   default = 16
 }
