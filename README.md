@@ -131,181 +131,287 @@ Prepare your environment for authenticating and running your Terraform scripts. 
 ##  Start Terraform
 
 * To use terraform, you must have a terraform file of command written and a terraform executable.
-
-*  Create a `terraform.tf` file in the path where the user will use the terraform.
+* You should create a folder to use terraform, create a terraform.tf file, and enter the contents below.
    ```
-   touch terraform.tf
+   terraform {
+      required_version  =  ">= 1.3.0"
+      required_providers {
+         oci  =  {
+            source = "oracle/oci"
+            version = "4.96.0"
+         }
+      }
+   }
+
+   provider  "oci" {
+      tenancy_ocid  = var.terraform_data.provider.tenancy_ocid
+      user_ocid  = var.terraform_data.provider.user_ocid
+      fingerprint  = var.terraform_data.provider.fingerprint
+      region  = var.terraform_data.provider.region
+      private_key_path  = var.terraform_data.provider.private_key_path
+   }
+
+   locals {
+      tenancy_ocid = var.terraform_data.vm_info.compartment_ocid == null ? var.terraform_data.provider.tenancy_ocid : var.terraform_data.vm_info.compartment_ocid
+   }
+
+   variable "terraform_data" {
+      type = object({
+         provider = object({
+            tenancy_ocid     = string
+            user_ocid        = string
+            fingerprint      = string
+            private_key_path = string
+            region           = string
+         })
+         vm_info = object({
+            vm_name             = string
+            compartment_ocid    = optional(string)
+            user_data_file_path = optional(string)
+            additional_volumes  = optional(list(number))
+            operating_system = object({
+            OS                      = string
+            OS_version              = string
+            custom_image_name       = optional(string)
+            boot_volume_size_in_gbs = optional(number)
+            })
+            network_interface = object({
+            subnet_ocid = string
+            security_list = optional(list(object({
+               direction        = optional(string)
+               protocol         = optional(string)
+               port_range_min   = optional(string)
+               port_range_max   = optional(string)
+               remote_ip_prefix = optional(string)
+               type             = optional(string)
+               code             = optional(string)
+            })))
+            })
+            shape = object({
+            shape_name          = string
+            shape_cpus          = optional(number)
+            shape_memory_in_gbs = optional(number)
+            })
+            ssh_authorized_keys = optional(object({
+            ssh_public_key           = optional(string)
+            ssh_public_key_file_path = optional(string)
+            }))
+         })
+      })
+      default = {
+         provider = {
+            fingerprint      = null
+            private_key_path = null
+            region           = null
+            tenancy_ocid     = null
+            user_ocid        = null
+         }
+         vm_info = {
+            additional_volumes = []
+            compartment_ocid   = null
+            network_interface = {
+            security_list = [{
+               code             = null
+               direction        = null
+               port_range_max   = null
+               port_range_min   = null
+               protocol         = null
+               remote_ip_prefix = null
+               type             = null
+            }]
+            subnet_ocid = null
+            }
+            operating_system = {
+            OS                      = null
+            OS_version              = null
+            boot_volume_size_in_gbs = 50
+            custom_image_name       = null
+            }
+            shape = {
+            shape_cpus          = 1
+            shape_memory_in_gbs = 16
+            shape_name          = null
+            }
+            ssh_authorized_keys = {
+            ssh_public_key           = null
+            ssh_public_key_file_path = null
+            }
+            user_data_file_path = null
+            vm_name             = null
+         }
+      }
+   }
+
+   module  "create_oci_instance" {
+   source  =  "git::https://github.com/ZConverter-samples/terraform-oci-create-instnace-modules.git"
+   region = var.terraform_data.provider.region
+   vm_name = var.terraform_data.vm_info.vm_anme
+   compartment_ocid = local.compartment_ocid
+   user_data_file_path = var.terraform_data.vm_info.user_data_file_path
+   additional_volumes = var.terraform_data.vm_info.additional_volumes
+
+   OS = var.terraform_data.operating_system.OS
+   OS_version = var.terraform_data.operating_system.OS_version
+   custom_image_name = var.terraform_data.operating_system.custom_image_name
+   boot_volume_size_in_gbs = var.terraform_data.operating_system.boot_volume_size_in_gbs
+   
+   subnet_ocid = var.terraform_data.vm_info.network_interface.subnet_ocid
+   security_list = var.terraform_data.vm_info.network_interface.security_list
+
+
+   shape_name = var.terraform_data.vm_info.shape.shape_name
+   shape_cpus = var.terraform_data.vm_info.shape.shape_cpus
+   shape_memory_in_gbs = var.terraform_data.vm_info.shape.shape_memory_in_gbs
+
+   ssh_public_key = var.terraform_data.vm_info.ssh_authorized_keys.ssh_public_key
+   ssh_public_key_file_path = var.terraform_data.vm_info.ssh_authorized_keys.ssh_public_key_file_path
+   }
+
+   output "result" {
+      value = module.create_oci_instance.result
+   }
+   ```
+* After creating the oci_terraform.json file to enter the user's value, you must enter the contents below. 
+* ***<sapn style="color:red">The oci_terraform.json below is an example of a required value only. See below the Attributes table for a complete example.</span>***
+*  ***<sapn style="color:red">There is an attribute table for input values under the script, so you must refer to it.</span>***
+   ```
+   {
+      "terraform_data" : {
+         "provider" : {
+            "tenancy_ocid" : "ocid1.tenancy.oc1..aaaaaaaa******************",
+            "user_ocid" : "ocid1.user.oc1..aaaaaaaa********************",
+            "fingerprint" : "1a:****************************",
+            "private_key_path" : "C:\\Users\\opc\\terraform\\oci_private_key.pem",
+            "region" : "us-ashburn-1"
+        },
+        "vm_info" : {
+            "vm_name" : "oci_instnace_test",
+            "additional_volumes" : [50],
+            "operating_system" : {
+               "OS" : "CentOS",
+               "OS_version" : "7"
+            },
+            "shape" : {
+               "shape_name" : "VM.Standard.E4.Flex",
+               "shape_cpus" : 2,
+               "shape_memory_in_gbs" : 4
+            },
+            "network_interface" : {
+               "subnet_ocid" : "ocid1.subnet.oc1.us-ashburn-1.aaaaaaaa**************************"
+            },
+            "ssh_authorized_keys" : {
+               "ssh_public_key" : "ssh-rsa AAAAB3NzaC1yc2EA**********************"
+            }
+         }
+      }
+   }
+   ```
+### Attribute Table
+|Attribute|Data Type|Required|Default Value|Description|
+|---------|---------|--------|-------------|-----------|
+| terraform_data.provider.tenancy_ocid | string | yes | none |The tenancy_ocid you recorded in the memo during the [preparation step](#create-api-key).|
+| terraform_data.provider.user_ocid | string | yes | none |The user_ocid you recorded in the memo during the [preparation step](#create-api-key).|
+| terraform_data.provider.fingerprint | string | yes | none |The fingerprint you recorded in the memo during the [preparation step](#create-api-key).|
+| terraform_data.provider.region | string | yes | none |The region you recorded in the memo during the [preparation step](#create-api-key).|
+| terraform_data.provider.private_key_path | string | yes | none |The absolute path of the private key that you downloaded during the [preparation step](#create-api-key).|
+| terraform_data.vm_info.vm_name | string | yes | none |The name of the instance you want to create.|
+| terraform_data.vm_info.compartment_ocid | string | no | terraform_data.provider.tenancy_ocid |Parcel to create an instance (automatically use tenancy_ocid if not entered).|
+| terraform_data.vm_info.operating_system.OS | string | yes | none |Enter the OS name you want to create among (Canonical Ubuntu, CentOS, Oracle Autonomous Linux, Oracle Linux, Oracle Linux Cloud Developer, Windows).|
+| terraform_data.vm_info.operating_system.OS_version | string | yes | none |Enter the version of the OS selected in terraform_data.vm_info.operating_system.OS.|
+| terraform_data.vm_info.operating_system.OS_version | string | no | none |Enter the image name when the OS you want to create is a custom user image of the oci.|
+| terraform_data.vm_info.operating_system.custom_image_name | string | no | none |Enter the image name when the OS you want to create is a custom user image of the oci.|
+| terraform_data.vm_info.operating_system.boot_volume_size_in_gbs | string | no | 50 |Boot volume size of the instance you want to create.|
+| terraform_data.vm_info.shape.shape_name | string | yes | none |Shape types provided by Oracle Cloud.|
+| terraform_data.vm_info.shape.shape_cpus | string | conditional | 1 |Number of cpu to use when using instance_type_name as flexible type.|
+| terraform_data.vm_info.shape.shape_memory_in_gbs | string | conditional | 16 |Number of memory size to use when using instance_type_name as flexible type.|
+| terraform_data.vm_info.network_interface.subnet_ocid | string | yes | none |The subnets in which the instance primary VNICs are created.|
+| terraform_data.vm_info.network_interface.security_list | list | no | none |	When you need to create ingress and egress rules.|
+| terraform_data.vm_info.network_interface.security_list.[*].direction | stirng | conditional | none | Either "ingress" or "egress"|
+| terraform_data.vm_info.network_interface.security_list.[*].protocol | string | conditional | none | Enter a supported protocol name |
+| terraform_data.vm_info.network_interface.security_list.[*].port_range_min | string | conditional | none | Minimum Port Range (Use only when using udp, tcp protocol) |
+| terraform_data.vm_info.network_interface.security_list.[*].port_range_max | string | conditional | none | Maximum Port Range (Use only when using udp, tcp protocol) |
+| terraform_data.vm_info.network_interface.security_list.[*].type | string | conditional | none | type number (Use only when using the icmp protocol) |
+| terraform_data.vm_info.network_interface.security_list.[*].code | string | conditional | none | code number (Use only when using the icmp protocol) |
+| terraform_data.vm_info.network_interface.security_list.[*].remote_ip_prefix | string | conditional | none | CIDR (ex : 0.0.0.0/0) |
+| terraform_data.vm_info.ssh_authorized_keys.ssh_public_key | string | conditional | none | ssh public key to use when using Linux-based OS. (Use only one of the following: ssh_public_key, ssh_public_key_file_path) |
+| terraform_data.vm_info.ssh_authorized_keys.ssh_public_key_file_path | string | conditional | none | Absolute path of ssh public key file to use when using Linux-based OS. (Use only one of the following: ssh_public_key, ssh_public_key_file_path) |
+| terraform_data.vm_info.user_data_file_path | string | conditional | none | Absolute path of user data file path to use when cloud-init. |
+| terraform_data.vm_info.additional_volumes | string | conditional | none | Use to add a block volume. Use numeric arrays. |
+
+* oci_terraform.json Full Example
+
+   ```
+   {
+      "terraform_data" : {
+         "provider" : {
+            "tenancy_ocid" : null,
+            "user_ocid" : null,
+            "fingerprint" : null,
+            "private_key_path" : null,
+            "region" : null
+        },
+        "vm_info" : {
+            "region" : null,
+            "vm_name" : null,
+            "compartment_ocid" : null,
+            "user_data_file_path" : null,
+            "additional_volumes" : null,
+            "operating_system" : {
+               "OS" : null,
+               "OS_version" : null,
+               "custom_image_name" : null,
+               "boot_volume_size_in_gbs" : null
+            },
+            "shape" : {
+               "shape_name" : null,
+               "shape_cpus" : null,
+               "shape_memory_in_gbs" : null
+            },
+            "network_interface" : {
+               "subnet_ocid" : null,
+               "security_list" : [
+                  {
+                     "direction" : null,
+                     "protocol" : null,
+                     "port_range_min" : null,
+                     "port_range_max" : null,
+                     "remote_ip_prefix" : null,
+                     "type" : null,
+                     "code" : null
+                  }
+               ]
+            },
+            "ssh_authorized_keys" : {
+               "ssh_public_key" : null,
+               "ssh_public_key_file_path" : null
+            }
+         }
+      }
+   }
    ```
 
-* Writing a terraform version
-   * You should write the following script in the terraform.tf file.
+* **Go to the file path of Terraform.exe and Initialize the working directory containing the terraform configuration file.**
 
+   ```
+   terraform init
+   ```
+   * **Note**
+       -chdir : When you use a chdir the usual way to run Terraform is to first switch to the directory containing the `.tf` files for your root module (for example, using the `cd` command), so that Terraform will find those files automatically without any extra arguments. (ex : terraform -chdir=\<terraform data file path\> init)
 
-### Example tf file
-```
-terraform {
-  required_version  =  ">= 1.3.0"
-  required_providers {
-    oci  =  {
-      source = "oracle/oci"
-      version = "4.96.0"
-    }
-  }
-}
-
-provider  "oci" {
-  tenancy_ocid  = "<The tenancy ocid you wrote down above>"
-  user_ocid  = "<The user ocid you wrote down above>"
-  fingerprint  = "<The fingerprint you wrote down above>"
-  region  = "<The region you wrote down above>"
-  private_key_path  = "<The absolute path of the private key you downloaded>"
-}
-
-module  "create_oci_instance" {
-  source  =  "git::https://github.com/ZConverter-samples/terraform-oci-create-instnace-modules.git"
-  region = "us-ashburn-1"
-  vm_name = "oracle-terraform"
-  subnet_ocid = "ocid1.subnet.oc1.us-ashburn-1.aaaaa...."
-  compartment_ocid = "ocid1.compartment.oc1..aaaa"
-  OS = "CentOS"
-  OS_version = "7"
-  instance_type_name = "VM.Standard.E4.Flex"
-  instance_cpus = 1
-  instance_memory_in_gbs = 16
-  ssh_public_key = "ssh-rsa AAAAB3Nza....ssh_public_key"
-  additional_volumes =  [50]
-  security_list = [
-	{
-		"direction" : "ingress",
-		"protocol" : "tcp",
-		"port_range_min" : "22",
-		"port_range_max" : "22",
-		"remote_ip_prefix" : "0.0.0.0/0"
-	}
-  ]
-}
-```
-
-### `terraform.tf`
-
-#### terraform version
-``` 
-terraform {
-  required_version  =  ">= 1.3.0"
-  required_providers {
-    oci  =  {
-      source = "oracle/oci"
-      version = "4.96.0"
-    }
-  }
-}
-```
-### provider
-* If you would like to know more about multiple provider configurations, please refer to [OCI configurations](https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformproviderconfiguration.htm).
-```
-provider  "oci" {
-  tenancy_ocid  = "<The tenancy ocid you wrote down above>"
-  user_ocid  = "<The user ocid you wrote down above>"
-  fingerprint  = "<The fingerprint you wrote down above>"
-  region  = "<The region you wrote down above>"
-  private_key_path  = "<The absolute path of the private key you downloaded>"
-}
-```
-#### or
-```
-provider  "oci" {
-  config_file_profile = "<The profile you will use for the configuration file>"
-}
-```
-* Profile name if you want to provide authentication credentials using a custom profile in the OCI configuration file. For more information, see Using [SDK and CLI Configuration Files](https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformproviderconfiguration.htm#terraformproviderconfiguration_topic-SDK_and_CLI_Config_File).
-
-### module
-* example
-```
-module  "create_oci_instance" {
-  source  =  "git::https://github.com/ZConverter-samples/terraform-oci-create-instnace-modules.git"
-  region = "us-ashburn-1"
-  vm_name = "oracle-terraform"
-  subnet_ocid = "ocid1.subnet.oc1.us-ashburn-1.aaaaa...."
-  compartment_ocid = "ocid1.compartment.oc1..aaaa"
-  OS = "CentOS"
-  OS_version = "7
-  instance_type_name = "VM.Standard.E4.Flex"
-  instance_cpus = 1
-  instance_memory_in_gbs = 16
-  ssh_public_key = "ssh-rsa AAAAB3Nza....ssh_public_key"
-  additional_volumes =  [50]
-}
-```
-### output
-* Returns the default information and connection information for the instance.
-```
-output "result" {
-  value = module.create_oci_instance.result
-}
-```
-### create-instance Module Attributes
-| Attribute | Data Type | Required | Default Value | Valid Values | Description |
-|---|---|---|---|---|---|
-| region | string | yes | none | string of the region |The region where you want to create an instance.|
-|vm_name| string | yes |  none | Display Name | The display name of the instance. |
-| compartment_ocid | string | yes | none | Compartments available for the user| OCID of the compartment that the Compute Instance is created in |
-| subnet_ocid |string | yes | none | Subnet created | The subnets in which the instance primary VNICs are created. |
-| OS | string | yes | none | string of OS Name | One of Canonical Ubuntu, CentOS, Oracle Autonomous Linux, Oracle Linux, Oracle Linux Cloud Developer, Windows |
-| OS_version |  string | yes | none| string of OS Version Name | Version of the selected OS. |
-| custom_image_name |  string | no | none| string value | When creating an instance using a custom image |
-| boot_volume_size_in_gbs| number | no | 50 | number value | Boot volume size of the instance you want to create. |
-| instance_type_name | string | yes | none | string of Shape Name | Shape types provided by Oracle Cloud. |
-| instance_cpus | number | conditional | 1 | number value | Number of cpu to use when using instance_type_name as flexible type. |
-| instance_memory_in_gbs | number | conditional | 16 | number value | Number of memory size to use when using instance_type_name as flexible type. |
-| ssh_public_key | string | conditional | none | string value | ssh public key to use when using Linux-based OS. (Use only one of the following: ssh_public_key, ssh_public_key_file_path)|
-| ssh_public_key_file_path | string | conditional | none | string value | Absolute path of ssh public key file to use when using Linux-based OS. (Use only one of the following: ssh_public_key, ssh_public_key_file_path)|
-| user_data_file_path | string | conditional | none | string value | Absolute path of user data file path to use when cloud-init.|
-| additional_volumes | list | conditional | [] | list value | Use to add a block volume. Use numeric arrays.|
-| security_list | list | no | none | list value | When you need to create ingress and egress rules |
-| direction | string | conditional | none | string value | Either "ingress" or "egress" |
-| protocol | string | conditional | none | string value | Enter a supported protocol name |
-| port_range_min | string | conditional | none | string value | Minimum Port Range (Use only when using udp, tcp protocol) |
-| port_range_max | string | conditional | none | string value | Maximum Port Range (Use only when using udp, tcp protocol) |
-| type | string | conditional | none | string value | type number (Use only when using the icmp protocol) |
-| code | string | conditional | none | string value | code number (Use only when using the icmp protocol) |
-| remote_ip_prefix | string | conditional | none | IPv4 CIDR | CIDR |
-
-## init
-**tree**
-Windows
-```
-.
-| terraform.tf
-| terraform.exe
-```
-
-Linux
-```
-.
-| terraform.tf
-```
-**Go to the file path of Terraform.exe and Initialize the working directory containing the terraform configuration file.**
-```
-terraform -chdir={terraform data file path} init
-```
-* **Note**
-       -chdir : When you use a chdir the usual way to run Terraform is to first switch to the directory containing the `.tf` files for your root module (for example, using the `cd` command), so that Terraform will find those files automatically without any extra arguments.
-
-**Creates an execution plan. By default, creating a plan consists of:**
-* Reading the current state of any already-existing remote objects to make sure that the Terraform state is up-to-date.
-* Comparing the current configuration to the prior state and noting any differences.
-* Proposing a set of change actions that should, if applied, make the remote objects match the configuration.
-```
-terraform -chdir={terraform data file path} plan -var-file={vars file with user specified name}
-```
-* **Note**
+* **Creates an execution plan. By default, creating a plan consists of:**
+  * Reading the current state of any already-existing remote objects to make sure that the Terraform state is up-to-date.
+  * Comparing the current configuration to the prior state and noting any differences.
+  * Proposing a set of change actions that should, if applied, make the remote objects match the configuration.
+   ```
+   terraform plan -var-file=<Absolute path of oci_terraform.json>
+   ```
+  * **Note**
 	* -var-file : When you use a var-file Sets values for potentially many [input variables](https://www.terraform.io/docs/language/values/variables.html) declared in the root module of the configuration, using definitions from a ["tfvars" file](https://www.terraform.io/docs/language/values/variables.html#variable-definitions-tfvars-files). Use this option multiple times to include values from more than one file.
      * The file name of vars.tfvars can be changed.
 
-**Executes the actions proposed in a Terraform plan.**
-```
-terraform -chdir={terraform data file path} apply -var-file={vars file with user specified name} -auto-approve
-```
+* **Executes the actions proposed in a Terraform plan.**
+   ```
+   terraform apply -var-file=<Absolute path of oci_terraform.json> -auto-approve
+   ```
 * **Note**
 	* -auto-approve : Skips interactive approval of plan before applying. This option is ignored when you pass a previously-saved plan file, because Terraform considers you passing the plan file as the approval and so will never prompt in that case.
