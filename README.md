@@ -152,7 +152,7 @@ Prepare your environment for authenticating and running your Terraform scripts. 
    }
 
    locals {
-      tenancy_ocid = var.terraform_data.vm_info.compartment_ocid == null ? var.terraform_data.provider.tenancy_ocid : var.terraform_data.vm_info.compartment_ocid
+      compartment_ocid = var.terraform_data.vm_info.compartment_ocid == null ? var.terraform_data.provider.tenancy_ocid : var.terraform_data.vm_info.compartment_ocid
    }
 
    variable "terraform_data" {
@@ -245,7 +245,7 @@ Prepare your environment for authenticating and running your Terraform scripts. 
    module  "create_oci_instance" {
    source  =  "git::https://github.com/ZConverter-samples/terraform-oci-create-instnace-modules.git"
    region = var.terraform_data.provider.region
-   vm_name = var.terraform_data.vm_info.vm_anme
+   vm_name = var.terraform_data.vm_info.vm_name
    compartment_ocid = local.compartment_ocid
    user_data_file_path = var.terraform_data.vm_info.user_data_file_path
    additional_volumes = var.terraform_data.vm_info.additional_volumes
