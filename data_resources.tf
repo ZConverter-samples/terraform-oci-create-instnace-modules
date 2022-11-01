@@ -6,7 +6,7 @@ data "oci_core_images" "InstanceImageOCID" {
   compartment_id           = var.compartment_ocid
   operating_system         = var.OS
   operating_system_version = var.OS_version
-  shape                    = var.instance_type_name
+  shape                    = var.shape_name
 
   filter {
     name   = "display_name"
