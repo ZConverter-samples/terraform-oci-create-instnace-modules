@@ -1,103 +1,44 @@
-resource "oci_core_security_list" "create_security_list" {
+resource "oci_core_network_security_group" "create_network_security_group" {
   count          = var.security_list != null ? 1 : 0
   compartment_id = var.compartment_ocid
   vcn_id         = data.oci_core_subnet.get_subnet_infomation[0].vcn_id
 
-  display_name = "${var.vm_name}-security-list"
+  display_name = "${var.vm_name}-security-groups"
+}
 
-  dynamic "ingress_security_rules" {
-    for_each = [for data in local.ingress_security_list : 
-      data
-      if lower(data.protocol) == "tcp"
-    ]
+resource "oci_core_network_security_group_security_rule" "ingress" {
+  count = length(local.ingress_security_groups)
+  network_security_group_id = oci_core_network_security_group.create_network_security_group[0].id
+  direction = upper(local.ingress_security_groups[count.index].direction)
+  protocol = local.protocol[lower(local.ingress_security_groups[count.index].protocol)]
+  source = local.ingress_security_groups[count.index].remote_ip_prefix
+  source_type = "CIDR_BLOCK"
+
+  dynamic "tcp_options" {
+    for_each = contains(["tcp", "tcpv6"], lower(local.ingress_security_groups[count.index].protocol)) ? [1] : []
     content {
-      protocol = local.protocol["tcp"]
-      source   = ingress_security_rules.value["remote_ip_prefix"]
-
-      tcp_options {
-        max = ingress_security_rules.value["port_range_min"]
-        min = ingress_security_rules.value["port_range_max"]
+      destination_port_range {
+        min = local.ingress_security_groups[count.index].port_range_min == 0 ? 1 : local.ingress_security_groups[count.index].port_range_min
+        max = local.ingress_security_groups[count.index].port_range_max == 0 ? 65535 : local.ingress_security_groups[count.index].port_range_max
       }
     }
   }
 
-  dynamic "ingress_security_rules" {
-    for_each = [for data in local.ingress_security_list : 
-      data
-      if lower(data.protocol) == "udp"
-    ]
+  dynamic "udp_options" {
+    for_each = contains(["udp", "udpv6"], lower(local.ingress_security_groups[count.index].protocol)) ? [1] : []
     content {
-      protocol = local.protocol["udp"]
-      source   = ingress_security_rules.value["remote_ip_prefix"]
-
-      udp_options {
-        max = ingress_security_rules.value["port_range_min"]
-        min = ingress_security_rules.value["port_range_max"]
+      destination_port_range {
+        min = local.ingress_security_groups[count.index].port_range_min == 0 ? 1 : local.ingress_security_groups[count.index].port_range_min
+        max = local.ingress_security_groups[count.index].port_range_max == 0 ? 65535 : local.ingress_security_groups[count.index].port_range_max
       }
     }
   }
 
-  dynamic "ingress_security_rules" {
-    for_each = [for data in local.ingress_security_list : 
-      data
-      if lower(data.protocol) == "icmp"
-    ]
+  dynamic "icmp_options" {
+    for_each = contains(["icmp", "icmpv6"], lower(local.ingress_security_groups[count.index].protocol)) ? [1] : []
     content {
-      protocol = local.protocol["icmp"]
-      source   = ingress_security_rules.value["remote_ip_prefix"]
-
-      icmp_options {
-        type = ingress_security_rules.value["type"]
-        code = ingress_security_rules.value["code"]
-      }
-    }
-  }
-
-  dynamic "egress_security_rules" {
-    for_each = [for data in local.egress_security_list : 
-      data
-      if lower(data.protocol) == "tcp"
-    ]
-    content {
-      protocol = local.protocol["tcp"]
-      destination   = egress_security_rules.value["remote_ip_prefix"]
-
-      tcp_options {
-        max = egress_security_rules.value["port_range_min"]
-        min = egress_security_rules.value["port_range_max"]
-      }
-    }
-  }
-
-  dynamic "egress_security_rules" {
-    for_each = [for data in local.egress_security_list : 
-      data
-      if lower(data.protocol) == "udp"
-    ]
-    content {
-      protocol = local.protocol["udp"]
-      destination   = egress_security_rules.value["remote_ip_prefix"]
-
-      udp_options {
-        max = egress_security_rules.value["port_range_min"]
-        min = egress_security_rules.value["port_range_max"]
-      }
-    }
-  }
-
-  dynamic "egress_security_rules" {
-    for_each = [for data in local.egress_security_list : 
-      data
-      if lower(data.protocol) == "icmp"
-    ]
-    content {
-      protocol = local.protocol["icmp"]
-      destination   = egress_security_rules.value["remote_ip_prefix"]
-
-      icmp_options {
-        type = egress_security_rules.value["type"]
-        code = egress_security_rules.value["code"]
-      }
+      type = local.ingress_security_groups[count.index].type
+      code = local.ingress_security_groups[count.index].code
     }
   }
 }
