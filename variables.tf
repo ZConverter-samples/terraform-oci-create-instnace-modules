@@ -167,13 +167,13 @@ locals {
     for data in var.create_security_group_rules :
     data
     if data.direction == "ingress"
-  ] : null
+  ] : []
 
   egress_create_security_group_rules = var.create_security_group_rules != null ? [
     for data in var.create_security_group_rules :
     data
     if data.direction == "egress"
-  ] : null
+  ] : []
 }
 
 variable "region" {
