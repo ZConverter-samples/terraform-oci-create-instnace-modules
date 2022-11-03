@@ -63,7 +63,7 @@ locals {
         "user_password" : local.password
       },
       "Volume_Information" : local.volume,
-      "security_group" : local.security_group_rules
+      "Security_Group" : local.security_group_rules
     }
   })
 }
