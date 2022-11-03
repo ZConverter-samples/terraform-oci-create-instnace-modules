@@ -1,5 +1,5 @@
 resource "oci_core_network_security_group" "create_network_security_group" {
-  count          = var.security_list != null ? 1 : 0
+  count          = var.create_security_group_rules != null ? 1 : 0
   compartment_id = var.compartment_ocid
   vcn_id         = data.oci_core_subnet.get_subnet_infomation[0].vcn_id
 

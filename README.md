@@ -177,7 +177,7 @@ Prepare your environment for authenticating and running your Terraform scripts. 
             })
             network_interface = object({
             subnet_ocid = string
-            security_list = optional(list(object({
+            create_security_group_rules = optional(list(object({
                direction        = optional(string)
                protocol         = optional(string)
                port_range_min   = optional(string)
@@ -210,7 +210,7 @@ Prepare your environment for authenticating and running your Terraform scripts. 
             additional_volumes = []
             compartment_ocid   = null
             network_interface = {
-            security_list = [{
+            create_security_group_rules = [{
                code             = null
                direction        = null
                port_range_max   = null
@@ -256,7 +256,7 @@ Prepare your environment for authenticating and running your Terraform scripts. 
    boot_volume_size_in_gbs = var.terraform_data.vm_info.operating_system.boot_volume_size_in_gbs
    
    subnet_ocid = var.terraform_data.vm_info.network_interface.subnet_ocid
-   security_list = var.terraform_data.vm_info.network_interface.security_list
+   create_security_group_rules = var.terraform_data.vm_info.network_interface.create_security_group_rules
 
 
    shape_name = var.terraform_data.vm_info.shape.shape_name
@@ -324,14 +324,14 @@ Prepare your environment for authenticating and running your Terraform scripts. 
 | terraform_data.vm_info.shape.shape_cpus | number | conditional | 1 |Number of cpu to use when using instance_type_name as flexible type.|
 | terraform_data.vm_info.shape.shape_memory_in_gbs | number | conditional | 16 |Number of memory size to use when using instance_type_name as flexible type.|
 | terraform_data.vm_info.network_interface.subnet_ocid | string | yes | none |The subnets in which the instance primary VNICs are created.|
-| terraform_data.vm_info.network_interface.security_list | list | no | none |	When you need to create ingress and egress rules.|
-| terraform_data.vm_info.network_interface.security_list.[*].direction | stirng | conditional | none | Either "ingress" or "egress"|
-| terraform_data.vm_info.network_interface.security_list.[*].protocol | string | conditional | none | Enter a supported protocol name |
-| terraform_data.vm_info.network_interface.security_list.[*].port_range_min | string | conditional | none | Minimum Port Range (Use only when using udp, tcp protocol) |
-| terraform_data.vm_info.network_interface.security_list.[*].port_range_max | string | conditional | none | Maximum Port Range (Use only when using udp, tcp protocol) |
-| terraform_data.vm_info.network_interface.security_list.[*].type | string | conditional | none | type number (Use only when using the icmp protocol) |
-| terraform_data.vm_info.network_interface.security_list.[*].code | string | conditional | none | code number (Use only when using the icmp protocol) |
-| terraform_data.vm_info.network_interface.security_list.[*].remote_ip_prefix | string | conditional | none | CIDR (ex : 0.0.0.0/0) |
+| terraform_data.vm_info.network_interface.create_security_group_rules | list | no | none |	When you need to create ingress and egress rules.|
+| terraform_data.vm_info.network_interface.create_security_group_rules.[*].direction | stirng | conditional | none | Either "ingress" or "egress"|
+| terraform_data.vm_info.network_interface.create_security_group_rules.[*].protocol | string | conditional | none | Enter a supported protocol name |
+| terraform_data.vm_info.network_interface.create_security_group_rules.[*].port_range_min | string | conditional | none | Minimum Port Range (Use only when using udp, tcp protocol) |
+| terraform_data.vm_info.network_interface.create_security_group_rules.[*].port_range_max | string | conditional | none | Maximum Port Range (Use only when using udp, tcp protocol) |
+| terraform_data.vm_info.network_interface.create_security_group_rules.[*].type | string | conditional | none | type number (Use only when using the icmp protocol) |
+| terraform_data.vm_info.network_interface.create_security_group_rules.[*].code | string | conditional | none | code number (Use only when using the icmp protocol) |
+| terraform_data.vm_info.network_interface.create_security_group_rules.[*].remote_ip_prefix | string | conditional | none | CIDR (ex : 0.0.0.0/0) |
 | terraform_data.vm_info.ssh_authorized_keys.ssh_public_key | string | conditional | none | ssh public key to use when using Linux-based OS. (Use only one of the following: ssh_public_key, ssh_public_key_file_path) |
 | terraform_data.vm_info.ssh_authorized_keys.ssh_public_key_file_path | string | conditional | none | Absolute path of ssh public key file to use when using Linux-based OS. (Use only one of the following: ssh_public_key, ssh_public_key_file_path) |
 | terraform_data.vm_info.user_data_file_path | string | conditional | none | Absolute path of user data file path to use when cloud-init. |
@@ -368,7 +368,7 @@ Prepare your environment for authenticating and running your Terraform scripts. 
             },
             "network_interface" : {
                "subnet_ocid" : null,
-               "security_list" : [
+               "create_security_group_rules" : [
                   {
                      "direction" : null,
                      "protocol" : null,

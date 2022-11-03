@@ -16,7 +16,7 @@ data "oci_core_images" "InstanceImageOCID" {
 }
 
 data "oci_core_subnet" "get_subnet_infomation" {
-  count     = var.security_list != null ? 1 : 0
+  count     = var.create_security_group_rules != null ? 1 : 0
   subnet_id = var.subnet_ocid
 }
 

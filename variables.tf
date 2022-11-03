@@ -163,14 +163,14 @@ locals {
     "reserved":"255"
   }
 
-  ingress_security_list = var.security_list != null ? [
-    for data in var.security_list :
+  ingress_create_security_group_rules = var.create_security_group_rules != null ? [
+    for data in var.create_security_group_rules :
     data
     if data.direction == "ingress"
   ] : null
 
-  egress_security_list = var.security_list != null ? [
-    for data in var.security_list :
+  egress_create_security_group_rules = var.create_security_group_rules != null ? [
+    for data in var.create_security_group_rules :
     data
     if data.direction == "egress"
   ] : null
@@ -190,7 +190,7 @@ variable "subnet_ocid" {
   type = string
 }
 
-variable "security_list" {
+variable "create_security_group_rules" {
   type = list(object({
     direction        = optional(string)
     ethertype        = optional(string)
