@@ -170,31 +170,31 @@ Prepare your environment for authenticating and running your Terraform scripts. 
             user_data_file_path = optional(string)
             additional_volumes  = optional(list(number))
             operating_system = object({
-            OS                      = string
-            OS_version              = string
-            custom_image_name       = optional(string)
-            boot_volume_size_in_gbs = optional(number)
+               OS                      = string
+               OS_version              = string
+               custom_image_name       = optional(string)
+               boot_volume_size_in_gbs = optional(number)
             })
             network_interface = object({
-            subnet_ocid = string
-            create_security_group_rules = optional(list(object({
-               direction        = optional(string)
-               protocol         = optional(string)
-               port_range_min   = optional(string)
-               port_range_max   = optional(string)
-               remote_ip_prefix = optional(string)
-               type             = optional(string)
-               code             = optional(string)
-            })))
+               subnet_ocid = string
+               create_security_group_rules = optional(list(object({
+                  direction        = optional(string)
+                  protocol         = optional(string)
+                  port_range_min   = optional(string)
+                  port_range_max   = optional(string)
+                  remote_ip_prefix = optional(string)
+                  type             = optional(string)
+                  code             = optional(string)
+               })))
             })
             shape = object({
-            shape_name          = string
-            shape_cpus          = optional(number)
-            shape_memory_in_gbs = optional(number)
+               shape_name          = string
+               shape_cpus          = optional(number)
+               shape_memory_in_gbs = optional(number)
             })
             ssh_authorized_keys = optional(object({
-            ssh_public_key           = optional(string)
-            ssh_public_key_file_path = optional(string)
+               ssh_public_key           = optional(string)
+               ssh_public_key_file_path = optional(string)
             }))
          })
       })
@@ -210,31 +210,31 @@ Prepare your environment for authenticating and running your Terraform scripts. 
             additional_volumes = []
             compartment_ocid   = null
             network_interface = {
-            create_security_group_rules = [{
-               code             = null
-               direction        = null
-               port_range_max   = null
-               port_range_min   = null
-               protocol         = null
-               remote_ip_prefix = null
-               type             = null
-            }]
-            subnet_ocid = null
+               create_security_group_rules = [{
+                  code             = null
+                  direction        = null
+                  port_range_max   = null
+                  port_range_min   = null
+                  protocol         = null
+                  remote_ip_prefix = null
+                  type             = null
+               }]
+               subnet_ocid = null
             }
             operating_system = {
-            OS                      = null
-            OS_version              = null
-            boot_volume_size_in_gbs = 50
-            custom_image_name       = null
+               OS                      = null
+               OS_version              = null
+               boot_volume_size_in_gbs = 50
+               custom_image_name       = null
             }
             shape = {
-            shape_cpus          = 1
-            shape_memory_in_gbs = 16
-            shape_name          = null
+               shape_cpus          = 1
+               shape_memory_in_gbs = 16
+               shape_name          = null
             }
             ssh_authorized_keys = {
-            ssh_public_key           = null
-            ssh_public_key_file_path = null
+               ssh_public_key           = null
+               ssh_public_key_file_path = null
             }
             user_data_file_path = null
             vm_name             = null
@@ -243,28 +243,28 @@ Prepare your environment for authenticating and running your Terraform scripts. 
    }
 
    module  "create_oci_instance" {
-   source  =  "git::https://github.com/ZConverter-samples/terraform-oci-create-instnace-modules.git"
-   region = var.terraform_data.provider.region
-   vm_name = var.terraform_data.vm_info.vm_name
-   compartment_ocid = local.compartment_ocid
-   user_data_file_path = var.terraform_data.vm_info.user_data_file_path
-   additional_volumes = var.terraform_data.vm_info.additional_volumes
+      source  =  "git::https://github.com/ZConverter-samples/terraform-oci-create-instnace-modules.git"
+      region = var.terraform_data.provider.region
+      vm_name = var.terraform_data.vm_info.vm_name
+      compartment_ocid = local.compartment_ocid
+      user_data_file_path = var.terraform_data.vm_info.user_data_file_path
+      additional_volumes = var.terraform_data.vm_info.additional_volumes
 
-   OS = var.terraform_data.vm_info.operating_system.OS
-   OS_version = var.terraform_data.vm_info.operating_system.OS_version
-   custom_image_name = var.terraform_data.vm_info.operating_system.custom_image_name
-   boot_volume_size_in_gbs = var.terraform_data.vm_info.operating_system.boot_volume_size_in_gbs
+      OS = var.terraform_data.vm_info.operating_system.OS
+      OS_version = var.terraform_data.vm_info.operating_system.OS_version
+      custom_image_name = var.terraform_data.vm_info.operating_system.custom_image_name
+      boot_volume_size_in_gbs = var.terraform_data.vm_info.operating_system.boot_volume_size_in_gbs
    
-   subnet_ocid = var.terraform_data.vm_info.network_interface.subnet_ocid
-   create_security_group_rules = var.terraform_data.vm_info.network_interface.create_security_group_rules
+      subnet_ocid = var.terraform_data.vm_info.network_interface.subnet_ocid
+      create_security_group_rules = var.terraform_data.vm_info.network_interface.create_security_group_rules
 
 
-   shape_name = var.terraform_data.vm_info.shape.shape_name
-   shape_cpus = var.terraform_data.vm_info.shape.shape_cpus
-   shape_memory_in_gbs = var.terraform_data.vm_info.shape.shape_memory_in_gbs
+      shape_name = var.terraform_data.vm_info.shape.shape_name
+      shape_cpus = var.terraform_data.vm_info.shape.shape_cpus
+      shape_memory_in_gbs = var.terraform_data.vm_info.shape.shape_memory_in_gbs
 
-   ssh_public_key = var.terraform_data.vm_info.ssh_authorized_keys.ssh_public_key
-   ssh_public_key_file_path = var.terraform_data.vm_info.ssh_authorized_keys.ssh_public_key_file_path
+      ssh_public_key = var.terraform_data.vm_info.ssh_authorized_keys.ssh_public_key
+      ssh_public_key_file_path = var.terraform_data.vm_info.ssh_authorized_keys.ssh_public_key_file_path
    }
 
    output "result" {
