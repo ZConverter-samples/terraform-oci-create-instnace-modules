@@ -287,8 +287,8 @@ Prepare your environment for authenticating and running your Terraform scripts. 
         "vm_info" : {
             "vm_name" : "oci_instnace_test",
             "additional_volumes" : [50],
-            "operating_system" : {
-               "OS" : "CentOS",
+            "OS" : {
+               "OS_name" : "CentOS",
                "OS_version" : "7"
             },
             "shape" : {
@@ -316,10 +316,10 @@ Prepare your environment for authenticating and running your Terraform scripts. 
 | terraform_data.provider.private_key_path | string | yes | none |The absolute path of the private key that you downloaded during the [preparation step](#create-api-key).|
 | terraform_data.vm_info.vm_name | string | yes | none |The name of the instance you want to create.|
 | terraform_data.vm_info.compartment_ocid | string | no | terraform_data.provider.tenancy_ocid |Parcel to create an instance (automatically use tenancy_ocid if not entered).|
-| terraform_data.vm_info.operating_system.OS | string | yes | none |Enter the OS name you want to create among (Canonical Ubuntu, CentOS, Oracle Autonomous Linux, Oracle Linux, Oracle Linux Cloud Developer, Windows).|
-| terraform_data.vm_info.operating_system.OS_version | string | yes | none |The version of the OS you want to create.|
-| terraform_data.vm_info.operating_system.custom_image_name | string | no | none |Enter the image name when the OS you want to create is a custom user image of the oci.|
-| terraform_data.vm_info.operating_system.boot_volume_size_in_gbs | number | no | 50 |Boot volume size of the instance you want to create.|
+| terraform_data.vm_info.OS.OS_name | string | yes | none |Enter the OS name you want to create among (Canonical Ubuntu, CentOS, Oracle Autonomous Linux, Oracle Linux, Oracle Linux Cloud Developer, Windows).|
+| terraform_data.vm_info.OS.OS_version | string | yes | none |The version of the OS you want to create.|
+| terraform_data.vm_info.OS.custom_image_name | string | no | none |Enter the image name when the OS you want to create is a custom user image of the oci.|
+| terraform_data.vm_info.OS.boot_volume_size_in_gbs | number | no | 50 |Boot volume size of the instance you want to create.|
 | terraform_data.vm_info.shape.shape_name | string | yes | none |Shape types provided by Oracle Cloud.|
 | terraform_data.vm_info.shape.shape_cpus | number | conditional | 1 |Number of cpu to use when using instance_type_name as flexible type.|
 | terraform_data.vm_info.shape.shape_memory_in_gbs | number | conditional | 16 |Number of memory size to use when using instance_type_name as flexible type.|
@@ -355,8 +355,8 @@ Prepare your environment for authenticating and running your Terraform scripts. 
             "compartment_ocid" : null,
             "user_data_file_path" : null,
             "additional_volumes" : null,
-            "operating_system" : {
-               "OS" : null,
+            "OS" : {
+               "OS_name" : null,
                "OS_version" : null,
                "custom_image_name" : null,
                "boot_volume_size_in_gbs" : null
