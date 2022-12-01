@@ -281,7 +281,7 @@ Prepare your environment for authenticating and running your Terraform scripts. 
             "tenancy_ocid" : "ocid1.tenancy.oc1..aaaaaaaa******************",
             "user_ocid" : "ocid1.user.oc1..aaaaaaaa********************",
             "fingerprint" : "1a:****************************",
-            "private_key_path" : "C:\\Users\\opc\\terraform\\oci_private_key.pem",
+            "private_key_path" : "C:/Users/opc/terraform/oci_private_key.pem",
             "region" : "us-ashburn-1"
         },
         "vm_info" : {
