@@ -44,7 +44,7 @@ locals {
         icmp_options = length(sg_egress_rule.icmp_options) != 0 ? sg_egress_rule.icmp_options : null
       }
     ],null)
-  })
+  },null)
   result = tomap({
     "result" : {
       "Instance_information" : {
