@@ -222,7 +222,7 @@ Prepare your environment for authenticating and running your Terraform scripts. 
                subnet_ocid = null
             }
             OS = {
-               OS_nmae                 = null
+               OS_name                 = null
                OS_version              = null
                boot_volume_size_in_gbs = 50
                custom_image_name       = null
