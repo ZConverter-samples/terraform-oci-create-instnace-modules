@@ -2,6 +2,13 @@ data "oci_identity_availability_domains" "ADs" {
   compartment_id = var.compartment_ocid
 }
 
+data "oci_core_network_security_groups" "get_network_security_groups_id" {
+  count = var.security_group_name != null ? 1 : 0
+  compartment_id = var.compartment_ocid
+  display_name = var.security_group_name
+  vcn_id = data.oci_core_subnet.get_subnet_infomation.vcn_id
+}
+
 data "oci_core_images" "InstanceImageOCID" {
   compartment_id           = var.compartment_ocid
   operating_system         = var.OS
@@ -16,7 +23,6 @@ data "oci_core_images" "InstanceImageOCID" {
 }
 
 data "oci_core_subnet" "get_subnet_infomation" {
-  count     = var.create_security_group_rules != null ? 1 : 0
   subnet_id = var.subnet_ocid
 }
 
