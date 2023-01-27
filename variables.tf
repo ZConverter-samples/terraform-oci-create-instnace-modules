@@ -190,6 +190,11 @@ variable "subnet_ocid" {
   type = string
 }
 
+variable "security_group_name" {
+  type = string
+  default = null
+}
+
 variable "create_security_group_rules" {
   type = list(object({
     direction        = optional(string)
