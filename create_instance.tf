@@ -7,7 +7,7 @@ resource "oci_core_instance" "create_instance" {
   create_vnic_details {
     assign_public_ip = true
     subnet_id        = var.subnet_ocid
-    nsg_ids = var.create_security_group_rules != null ? [oci_core_network_security_group.create_network_security_group[0].id] : null
+    nsg_ids = var.create_security_group_rules != null ? [oci_core_network_security_group.create_network_security_group[0].id] : var.security_group_name != null ? [data.oci_core_network_security_groups.get_network_security_groups_id[0].network_security_groups[0].id] : null
   }
 
   source_details {
