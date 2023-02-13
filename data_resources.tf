@@ -12,7 +12,7 @@ data "oci_core_network_security_groups" "get_network_security_groups_id" {
 data "oci_core_images" "InstanceImageOCID" {
   compartment_id           = var.compartment_ocid
   operating_system         = var.OS
-  operating_system_version = var.OS_version
+  operating_system_version = var.OS != "Windows" ? var.OS_version : var.OS_version == "2012" ? "Server 2012 R2 Standard" : "Server ${var.OS_version} Standard"
   shape                    = var.shape_name
 
   filter {
