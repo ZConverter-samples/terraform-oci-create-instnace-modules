@@ -68,12 +68,20 @@ locals {
   })
 }
 
+# output "result" {
+#   value = local.result
+# }
+
+# resource "local_file" "output_result" {
+#   filename = "${path.cwd}/${var.vm_name}_result.json"
+
+#   content = jsonencode(local.result)
+# }
+
 output "result" {
-  value = local.result
-}
-
-resource "local_file" "output_result" {
-  filename = "${path.cwd}/${var.vm_name}_result.json"
-
-  content = jsonencode(local.result)
+  value = {
+    IP = oci_core_instance.create_instance.public_ip,
+    OS = "${var.OS}-${var.OS_version}",
+    VM_NAME = var.vm_name
+  }
 }
